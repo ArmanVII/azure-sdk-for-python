@@ -263,7 +263,7 @@ class RegressionTest:
         # Search for exact version or alpha build version of current version.
         pkg_search_string = "{0}=={1}".format(package, version)
         alpha_build_search_string = "{0}=={1}a".format(package, version)
-        return any(p == pkg_search_string or p.startswith(dev_build_search_string) for p in installed_pkgs)
+        return any(p == pkg_search_string or p.startswith(alpha_build_search_string) for p in installed_pkgs)
 
 
 # This method identifies package dependency map for all packages in azure sdk
