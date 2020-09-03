@@ -121,6 +121,11 @@ stages:
                       - checkout: self
                       - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
                         parameters:
+                          SourceFolder: ${{parameters.ArtifactName}} 
+                          TargetFolder: ${{artifact.safeName}}
+                          PackageName: ${{artifact.name}}
+                      - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
+                        parameters:
                           SourceFolder: ${{parameters.DocArtifact}}
                           TargetFolder: ${{artifact.safeName}}
                           PackageName: ${{artifact.name}}
@@ -131,7 +136,7 @@ stages:
                         displayName: Output Visible Artifacts
                       - template: /eng/common/pipelines/templates/steps/publish-blobs.yml
                         parameters:
-                          ArtifactLocation: '$(Pipeline.Workspace)/${{artifact.safeName}}'
+                          ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}} 
                           PackageRepository: PyPI
                           ReleaseSha: $(Build.SourceVersion)
                           WorkingDirectory: $(System.DefaultWorkingDirectory)

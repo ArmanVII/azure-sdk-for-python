@@ -69,7 +69,7 @@ function ParseMavenPackage($pkg, $workingDirectory) {
     PackageId      = $pkgId
     GroupId        = $groupId
     PackageVersion = $pkgVersion
-    ReleaseTag     = "$pkgId_$pkgVersion"
+    ReleaseTag     = "$($pkgId)_$($pkgVersion)"
     Deployable     = $forceCreate -or !(IsMavenPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion -groupId $groupId.Replace(".", "/"))
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
@@ -152,7 +152,7 @@ function ParseNPMPackage($pkg, $workingDirectory) {
   $resultObj = New-Object PSObject -Property @{
     PackageId      = $pkgId
     PackageVersion = $pkgVersion
-    ReleaseTag     = "$pkgId_$pkgVersion"
+    ReleaseTag     = "$($pkgId)_$($pkgVersion)"
     Deployable     = $forceCreate -or !(IsNPMPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
@@ -207,11 +207,12 @@ function ParseNugetPackage($pkg, $workingDirectory) {
   }
 
   Remove-Item $workFolder -Force  -Recurse -ErrorAction SilentlyContinue
+  Write-host "Here is $pkgId, Here is $pkgVersion$a"
 
   return New-Object PSObject -Property @{
     PackageId      = $pkgId
     PackageVersion = $pkgVersion
-    ReleaseTag     = "$pkgId_$pkgVersion"
+    ReleaseTag     = "$($pkgId)_$($pkgVersion)"
     Deployable     = $forceCreate -or !(IsNugetPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
@@ -276,7 +277,7 @@ function ParsePyPIPackage($pkg, $workingDirectory) {
   return New-Object PSObject -Property @{
     PackageId      = $pkgId
     PackageVersion = $pkgVersion
-    ReleaseTag     = "$pkgId_$pkgVersion"
+    ReleaseTag     = "$($pkgId)_$($pkgVersion)"
     Deployable     = $forceCreate -or !(IsPythonPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
@@ -337,7 +338,7 @@ function ParseCppArtifact($pkg, $workingDirectory) {
   return New-Object PSObject -Property @{
     PackageId      = $pkgName
     PackageVersion = $pkgVersion
-    ReleaseTag     = "$pkgId_$pkgVersion"
+    ReleaseTag     = "$($pkgId)_$($pkgVersion)"
     # Artifact info is always considered deployable for now becasue it is not
     # deployed anywhere. Dealing with duplicate tags happens downstream in
     # CheckArtifactShaAgainstTagsList
