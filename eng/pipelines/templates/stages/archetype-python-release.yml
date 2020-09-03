@@ -249,12 +249,11 @@ stages:
         displayName: Setup DevOpsFeedName
 
       - task: TwineAuthenticate@0
-        displayName: 'Authenticate to feed: $(DevFeedName)'
+        displayName: 'Authenticate to feed'
         inputs:
           artifactFeeds: $(DevFeedName)
 
       - ${{ each artifact in parameters.Artifacts }}:
-
         - pwsh: |
             Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}
             New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
@@ -263,14 +262,15 @@ stages:
             Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$dashPrefix-[0-9]*.[0-9]*.[0-9]*a[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
             Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$underscorePrefix-[0-9]*.[0-9]*.[0-9]*a[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
             Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}}
-            $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}} | Measure-Object).Count
-            Write-Output "##vso[task.setvariable variable=FilesToUploadCount]$fileCount"
 
-        - script: |
-            set -e
+            $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}} | Measure-Object).Count
+            if ($fileCount -ne 0) { 
+              Write-Host "No alpha packages for ${{artifact.safeName}} to publish."
+              exit 0
+            }
+
             twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*a[0-9]*.whl
-            echo "Uploaded whl to devops feed"
+            echo "Uploaded whl to devops feed $(DevFeedName)"
             twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*a[0-9]*.zip
-            echo "Uploaded sdist to devops feed"
-          displayName: 'Publish package to feed: $(DevFeedName)'
-          condition: gt(variables['FilesToUploadCount'], 0)
+            echo "Uploaded sdist to devops feed $(DevFeedName)"
+          displayName: 'Publish ${{parameters.ArtifactName}} alpha package'
