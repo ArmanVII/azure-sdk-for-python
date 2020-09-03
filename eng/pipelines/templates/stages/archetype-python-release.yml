@@ -122,7 +122,7 @@ stages:
                       - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
                         parameters:
                           SourceFolder: ${{parameters.ArtifactName}} 
-                          TargetFolder: ${{artifact.safeName}}
+                          TargetFolder: ${{parameters.ArtifactName}}
                           PackageName: ${{artifact.name}}
                       - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
                         parameters:
