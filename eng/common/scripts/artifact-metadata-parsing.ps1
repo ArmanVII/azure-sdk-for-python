@@ -157,7 +157,7 @@ function ParseNPMPackage($pkg, $workingDirectory) {
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
   }
-
+  Write-Host "Here is the release tag."
   return $resultObj
 }
 
